@@ -1,5 +1,6 @@
 package anji.ipc.flv;
 
+import anji.ipc.commons.codec.DefaultBinaryTruncationDecoder;
 import anji.ipc.core.channel.Channel;
 import anji.ipc.core.channel.SerialPortChannel;
 import anji.ipc.core.channel.TcpClientChannel;
@@ -34,7 +35,8 @@ public class ChannelConfig {
     public Channel mcuChannel() {
         String comName = "";
         int baudrate=0;
-        Channel channel = new SerialPortChannel(comName,baudrate,)
+
+//        Channel channel = new SerialPortChannel(comName,baudrate,new DefaultBinaryTruncationDecoder())
 
         return null;
     }

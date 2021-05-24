@@ -1,5 +1,6 @@
-package anji.ipc.flv.rcs_message;
+package anji.ipc.flv.rcs_message.response;
 
+import anji.ipc.flv.rcs_message.Header;
 import lombok.Data;
 
 @Data
