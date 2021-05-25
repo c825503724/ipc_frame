@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageTypeMap {
-    public static enum Type{
+    public enum Type {
         LOGIN_REQ,
         LOGIN_RESPONSE,
         START_MOVE,
@@ -33,17 +33,22 @@ public class MessageTypeMap {
         RESET_ER,
         RESET_ER_RESP,
     }
-    private final static Map<Type,Integer> maps = new HashMap<>(Type.values().length);
-    private static void register(Type type){
-        maps.put(type,initNumber++);
+
+    private final static Map<Type, Integer> maps = new HashMap<>(Type.values().length);
+
+    private static void register(Type type) {
+        maps.put(type, initNumber++);
     }
-    public static Integer getTypeValue(Type t){
+
+    public static Integer getTypeValue(Type t) {
         return maps.get(t);
     }
+
     private static int initNumber = 1;
+
     static {
 
-        for(Type t:Type.values()){
+        for (Type t : Type.values()) {
             register(t);
         }
 
