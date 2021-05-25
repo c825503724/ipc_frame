@@ -1,5 +1,7 @@
 package anji.ipc.core.event;
 
+
+
 public class MessageReceiveEvent extends Event {
 
     private Object message;
@@ -12,6 +14,14 @@ public class MessageReceiveEvent extends Event {
 
     @Override
     public String eventKey() {
+        return eventKey;
+    }
+
+    public Object getMessage() {
+        return message;
+    }
+
+    public String getEventKey() {
         return eventKey;
     }
 }

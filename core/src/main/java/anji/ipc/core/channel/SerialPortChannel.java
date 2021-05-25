@@ -123,7 +123,7 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
     @Override
     public void send(R t) {
         if (channelFuture.channel().isActive()) {
-            channelFuture.channel().write(t);
+            channelFuture.channel().writeAndFlush(t);
         } else {
             logger.error("串口未打开");
             throw new ErrorConnectException("串口未打开");

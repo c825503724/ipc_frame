@@ -62,19 +62,21 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
         @Override
         public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
             logger.info(String.format("tcp断开服务器连接,%s秒后开始尝试重连", reconnectDelay));
-            eventConsumer.accept(new ChannelDisconnectEvent(channelName));
+            if(eventConsumer!=null) {
+                eventConsumer.accept(new ChannelDisconnectEvent(channelName));
+            }
             ctx.channel().eventLoop().schedule(TcpClientChannel.this::connect, reconnectDelay, TimeUnit.SECONDS);
         }
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));
+            if(eventConsumer!=null) {eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));}
         }
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
-            eventConsumer.accept(new ChannelConnectedEvent(channelName));
+            if(eventConsumer!=null) {
+            eventConsumer.accept(new ChannelConnectedEvent(channelName));}
 
             logger.info(String.format("tcp连上服务器%s", ctx.channel().remoteAddress()));
         }

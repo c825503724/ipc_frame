@@ -26,7 +26,6 @@ public abstract class Channel<R, P> {
     @NonNull
     protected String channelName;
 
-    @NonNull
     protected ByteToMessageDecoder splitter;
 
 
