@@ -22,7 +22,7 @@ public class ChannelConfig {
         String rcsIp = "";
         int port = 0;
         final Gson wgson = new Gson();
-        return new TcpClientChannel(rcsIp, port, "rcs", null,
+        return new TcpClientChannel(true,rcsIp, port, "rcs", null,
                 (o) -> Unpooled.wrappedBuffer(wgson.toJson(o).getBytes(StandardCharsets.UTF_8)),
                 (p) -> {
                 JsonElement e= JsonParser.parseString(p.readCharSequence(p.readableBytes(),StandardCharsets.UTF_8).toString());
@@ -31,7 +31,7 @@ public class ChannelConfig {
     }
 
 
-    @Bean(name = "mcuChannel")
+//    @Bean(name = "mcuChannel")
     public Channel mcuChannel() {
         String comName = "";
         int baudrate=0;

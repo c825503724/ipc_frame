@@ -45,13 +45,14 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
 
     private ChannelFuture channelFuture;
 
+    private Boolean idleCheck=true;
 
-
-    public TcpClientChannel(String serverIp, Integer serverPort, String channelName, ByteToMessageDecoder splitter,
+    public TcpClientChannel(boolean idleCheck, String serverIp, Integer serverPort, String channelName, ByteToMessageDecoder splitter,
                             Encoder<R> encoder, Decoder<P> decoder, Consumer<Event> c) {
         super(channelName, splitter, encoder, decoder, c);
         this.serverIp = serverIp;
         this.serverPort = serverPort;
+        this.idleCheck= idleCheck;
 
     }
 
@@ -70,7 +71,7 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            if(eventConsumer!=null) {eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));}
+            if(eventConsumer!=null) {eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));((ByteBuf)msg).release();}
         }
 
         @Override
@@ -123,8 +124,10 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(
                                 new MessageEncoder(),
-                                new IdleStateHandler(readTimeout, 0, 0),
                                 reconnectHandle);
+                        if(idleCheck){
+                            ch.pipeline().addLast(new IdleStateHandler(readTimeout, 0, 0));
+                        }
                         if(splitter!=null){
                             ch.pipeline().addLast(splitter);
                         }
@@ -157,7 +160,6 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
         if (getConnectState()) {
             channelFuture.channel().writeAndFlush(t);
         }
-        throw new ErrorConnectException("tcp 不存在");
     }
 
     @Override

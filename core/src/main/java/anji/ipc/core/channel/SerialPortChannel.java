@@ -75,8 +75,9 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             if(eventConsumer!=null){
             eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));}
-
+            ((ByteBuf)msg).release();
         }
+
     }
 
 

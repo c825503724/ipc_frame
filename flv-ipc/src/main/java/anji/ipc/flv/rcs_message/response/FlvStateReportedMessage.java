@@ -16,7 +16,7 @@ public class FlvStateReportedMessage {
 
     private Integer motionStatus;
 
-    private Integer lift_status;
+    private Integer liftStatus;
 
     private Integer trayId;
 
