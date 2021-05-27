@@ -1,19 +1,18 @@
 package anji.ipc.flv.rcs_message.request;
 
-import anji.ipc.flv.rcs_message.Header;
-import anji.ipc.flv.rcs_message.Task;
+import anji.ipc.flv.rcs_message.TaskMessage;
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class MoveReqMessage {
+public class MoveReqMessage extends TaskMessage {
 
-    private Header header;
 
-    private Task task;
-
+    @SerializedName("next_path")
     private List<String> nextPaths;
 
+    @SerializedName("is_precise_stop")
     private Integer isPreciseStop;
 }

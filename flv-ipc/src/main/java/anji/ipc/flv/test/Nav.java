@@ -6,13 +6,12 @@ import anji.ipc.core.channel.SerialPortChannel;
 import anji.ipc.core.channel.TcpClientChannel;
 import anji.ipc.core.event.MessageReceiveEvent;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Component
+//@Component
 public class Nav {
     private volatile Channel tcpChannel = null;
     private volatile Channel serialChannel = null;

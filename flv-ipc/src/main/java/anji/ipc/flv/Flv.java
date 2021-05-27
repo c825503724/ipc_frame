@@ -15,6 +15,6 @@ public class Flv implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Thread.currentThread().join();
+//        Thread.currentThread().join();
     }
 }
