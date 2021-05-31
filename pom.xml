@@ -5,20 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.anji</groupId>
-    <artifactId>ipc-framework</artifactId>
+    <artifactId>agv-proxy-framework</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>core</module>
         <module>commons</module>
         <module>flv-ipc</module>
-        <module>agv-ipc-demo</module>
     </modules>
 
     <properties>
         <spring-boot-mavn-plugin.version>1.3.5.RELEASE</spring-boot-mavn-plugin.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-
         <spring-boot.version>2.0.4.RELEASE</spring-boot.version>
         <org.projectlombok>1.18.2</org.projectlombok>
         <netty.version>4.1.0.Final</netty.version>
@@ -38,8 +36,6 @@
                 <artifactId>guava</artifactId>
                 <version>${goole-guava}</version>
             </dependency>
-
-
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -72,14 +68,11 @@
                 <version>${gson-version}</version>
                 <scope>compile</scope>
             </dependency>
-
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>${commons-csv.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
