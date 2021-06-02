@@ -72,8 +72,8 @@ public class Frame {
     }
 
     public ByteBuf encode() {
-        frameLength = new UnsignedShort((short) (29 + (data != null ? data.length : 0)));
-        ByteBuf byteBuf = Unpooled.buffer();
+        frameLength = new UnsignedShort((short) (lengthBesideContent + (data != null ? data.length : 0)));
+        ByteBuf byteBuf = Unpooled.buffer(frameLength.getValue());
         try {
 
             for (int i = 0; i < codecFields.size(); ++i) {

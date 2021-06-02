@@ -23,17 +23,20 @@ public class Test {
 
     @org.junit.Test
     public void jax() throws Exception {
-
+        int i = 10000000;
         Frame f = mockFrame();
-        ByteBuf buf = f.encode();
-        Frame d = Frame.decode(buf);
-        System.out.println("");
+        long fd = System.currentTimeMillis();
+        while (i-- > 0) {
+            ByteBuf buf = f.encode();
+            Frame d = Frame.decode(buf);
+        }
+        System.out.println("end:"+(System.currentTimeMillis()-fd)/1000);
     }
 
 
     private Frame mockFrame() throws Exception {
         Frame frame = new Frame();
-        for (int i = 1; i < Frame.codecFields.size()-1; ++i) {
+        for (int i = 1; i < Frame.codecFields.size() - 1; ++i) {
             Field f = Frame.codecFields.get(i);
             f.setAccessible(true);
             Class c = f.getAnnotation(PropertyBytesInfo.class).type();
