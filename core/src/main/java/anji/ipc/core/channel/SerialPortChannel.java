@@ -49,13 +49,6 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
         this.baudrate = baudrate;
     }
 
-    public SerialPortChannel(String channelName,
-                             Encoder<R> encoder, Decoder<P> decoder,Consumer<Event> c) {
-
-        super(channelName, new DefaultBinaryTruncationDecoder(Unpooled.copiedBuffer(new byte[]{(byte) 0xAA}),
-                Unpooled.copiedBuffer(new byte[]{0x55}), 1, 400), encoder, decoder,c);
-    }
-
     class RxtxClientHandler extends MessageToMessageDecoder<ByteBuf> {
 
         @Override
@@ -132,6 +125,7 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
     }
 
     @Override
+    @PreDestroy
     public void close() {
         try {
             stop();

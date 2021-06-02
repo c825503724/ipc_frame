@@ -1,6 +1,7 @@
 package test;
 
 import anji.ipc.core.channel.Channel;
+import flv.ChannelConfig;
 import flv.Flv;
 import flv.rcs_message.response.CmdRespMessage;
 import flv.rcs_message.response.DeviceInfoRegisteredMessage;
@@ -8,6 +9,8 @@ import flv.rcs_message.response.FlvStateReportedMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -17,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Flv.class)
+@SpringBootTest(classes = {ChannelConfig.class, GsonAutoConfiguration.class})
 public class EnvironmentTest {
     @Autowired
-    @Resource(name = "rcsChannel")
+    @Qualifier(value = "rcsChannel")
     private Channel channel;
 
     @Test

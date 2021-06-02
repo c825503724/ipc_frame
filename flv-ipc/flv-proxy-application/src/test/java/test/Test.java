@@ -14,7 +14,6 @@ public class Test {
 
     @org.junit.Test
     public void ss1() throws Exception {
-        FlvStateReportedMessage message = EnvironmentTest.mockObject(FlvStateReportedMessage.class);
         System.out.println("");
     }
 
