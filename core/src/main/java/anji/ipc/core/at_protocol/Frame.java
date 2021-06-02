@@ -76,7 +76,8 @@ public class Frame {
         ByteBuf byteBuf = Unpooled.buffer();
         try {
 
-            for (Field f : codecFields) {
+            for (int i = 0; i < codecFields.size(); ++i) {
+                Field f = codecFields.get(i);
                 Class c = f.getType();
                 Object v = f.get(this);
                 f.setAccessible(true);
@@ -102,9 +103,9 @@ public class Frame {
                     byteBuf.writeBytes((ByteBuf) v);
                 } else if (c.equals(byte[].class) && v != null) {
                     byteBuf.writeBytes((byte[]) v);
-                } else if (c.equals(byte.class)) {
+                } else if (c.equals(Byte.class)) {
                     if (v != null) {
-                        byteBuf.writeByte((byte) v);
+                        byteBuf.writeByte((Byte) v);
                     } else {
                         byteBuf.writeByte(0);
                     }
@@ -129,11 +130,10 @@ public class Frame {
         Frame frame = new Frame();
         int marks = getStartMarkBytes().readableBytes();
         byteBuffer.skipBytes(marks);
-        codecFields.remove(0);
-        codecFields.remove(codecFields.size() - 1);
         try {
 
-            for (Field f : codecFields) {
+            for (int i = 1; i < codecFields.size()-1; ++i) {
+                Field f = codecFields.get(i);
                 f.setAccessible(true);
                 Class c = f.getAnnotation(PropertyBytesInfo.class).type();
                 Object v = null;
@@ -147,14 +147,17 @@ public class Frame {
                     Integer s = byteOrder == ByteOrder.LITTLE_ENDIAN ? byteBuffer.readIntLE() : byteBuffer.readInt();
                     v = UnsignedInteger.fromIntBits(s);
                 } else if (c.equals(byte[].class)) {
-                    v = new byte[frame.getFrameLength().getValue() - lengthIndex];
-                    byteBuffer.readBytes((byte[]) v);
-                } else if (c.equals(byte.class)) {
+                    int l = frame.getFrameLength().getValue() - lengthBesideContent;
+                    if (l > 0) {
+                        v = new byte[l];
+                        byteBuffer.readBytes((byte[]) v);
+                    }
+                } else if (c.equals(Byte.class)) {
                     v = byteBuffer.readByte();
                 }
                 f.set(frame, v);
             }
-        }catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
 
         }
         byteBuffer.skipBytes(marks);

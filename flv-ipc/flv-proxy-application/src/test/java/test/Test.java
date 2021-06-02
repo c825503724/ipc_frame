@@ -1,12 +1,15 @@
 package test;
 
-import anji.ipc.flv.jaxb.map.Model;
-import flv.rcs_message.response.FlvStateReportedMessage;
+import anji.ipc.commons.codec.PropertyBytesInfo;
+import anji.ipc.core.at_protocol.Frame;
+import anji.ipc.core.at_protocol.type.UnsignedShort;
+import com.google.common.primitives.UnsignedInteger;
+import com.google.common.primitives.UnsignedLong;
+import io.netty.buffer.ByteBuf;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.xml.bind.JAXBContext;
-import java.io.File;
+import java.lang.reflect.Field;
 
 @RunWith(JUnit4.class)
 public class Test {
@@ -21,8 +24,29 @@ public class Test {
     @org.junit.Test
     public void jax() throws Exception {
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(Model.class.getPackage().getName());
-        Model model = (Model) jaxbContext.createUnmarshaller().unmarshal(new File("C:\\Users\\admin\\Documents\\WeChat Files\\wxid_crpxtgdq72zq42\\FileStorage\\File\\2021-05\\ipc_ver_map 2.xml"));
+        Frame f = mockFrame();
+        ByteBuf buf = f.encode();
+        Frame d = Frame.decode(buf);
         System.out.println("");
+    }
+
+
+    private Frame mockFrame() throws Exception {
+        Frame frame = new Frame();
+        for (int i = 1; i < Frame.codecFields.size()-1; ++i) {
+            Field f = Frame.codecFields.get(i);
+            f.setAccessible(true);
+            Class c = f.getAnnotation(PropertyBytesInfo.class).type();
+            if (c.equals(UnsignedShort.class)) {
+                f.set(frame, new UnsignedShort((short) 0));
+            } else if (c.equals(UnsignedLong.class)) {
+                f.set(frame, UnsignedLong.fromLongBits(System.currentTimeMillis()));
+            } else if (c.equals(UnsignedInteger.class)) {
+                f.set(frame, UnsignedInteger.fromIntBits(0));
+            } else if (c.equals(Byte.class)) {
+                f.set(frame, (byte) 0);
+            }
+        }
+        return frame;
     }
 }
