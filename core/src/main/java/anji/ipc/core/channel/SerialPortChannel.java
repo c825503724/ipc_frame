@@ -1,14 +1,13 @@
 package anji.ipc.core.channel;
 
+import anji.ipc.commons.MaxLengthRecvByteBufAllocator;
 import anji.ipc.commons.codec.Decoder;
-import anji.ipc.commons.codec.DefaultBinaryTruncationDecoder;
 import anji.ipc.commons.codec.Encoder;
 import anji.ipc.core.event.ChannelConnectedEvent;
 import anji.ipc.core.event.Event;
 import anji.ipc.core.event.MessageReceiveEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -26,7 +25,7 @@ import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SerialPortChannel<R,P> extends Channel<R,P> {
+public class SerialPortChannel<R, P> extends Channel<R, P> {
 
 
     @Setter
@@ -43,8 +42,8 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
     private final Logger logger = LoggerFactory.getLogger(SerialPortChannel.class);
 
     public SerialPortChannel(String comName, Integer baudrate, String channelName, ByteToMessageDecoder splitter,
-                             Encoder<R> encoder, Decoder<P> decoder,Consumer<Event> m) {
-        super(channelName, splitter, encoder, decoder,m);
+                             Encoder<R> encoder, Decoder<P> decoder, Consumer<Event> m) {
+        super(channelName, splitter, encoder, decoder, m);
         this.comName = comName;
         this.baudrate = baudrate;
     }
@@ -53,22 +52,24 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
 
         @Override
         protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-
+            System.out.println("ok");
         }
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) {
-            if(eventConsumer!=null){
-            eventConsumer.accept(new ChannelConnectedEvent(channelName));}
+            if (eventConsumer != null) {
+                eventConsumer.accept(new ChannelConnectedEvent(channelName));
+            }
             logger.info("串口打开成功");
         }
 
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            if(eventConsumer!=null){
-            eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));}
-            ((ByteBuf)msg).release();
+            if (eventConsumer != null) {
+                eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));
+            }
+            ((ByteBuf) msg).release();
         }
 
     }
@@ -83,11 +84,14 @@ public class SerialPortChannel<R,P> extends Channel<R,P> {
                 .handler((new ChannelInitializer<RxtxChannel>() {
                     @Override
                     protected void initChannel(RxtxChannel ch) throws Exception {
-                        ch.config().setBaudrate(baudrate);
-                        ch.pipeline().addLast(
+                        ch.config().setBaudrate(baudrate)
+                        .setAllocator(new MaxLengthRecvByteBufAllocator());
+                        ch.pipeline().addLast(splitter,
                                 new RxtxClientHandler(),
                                 new MessageEncoder());
-                        if(splitter!=null){ch.pipeline().addLast(splitter);}
+//                        if (splitter != null) {
+//                            ch.pipeline().addLast(splitter);
+//                        }
                     }
                 }));
         return connect();

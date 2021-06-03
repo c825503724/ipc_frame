@@ -5,12 +5,14 @@ import anji.ipc.core.at_protocol.Frame;
 import anji.ipc.core.channel.Channel;
 import anji.ipc.core.channel.SerialPortChannel;
 import anji.ipc.core.channel.TcpClientChannel;
+import anji.ipc.core.event.Event;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import flv.utils.JSONToRcsMessageAdapterUtil;
 import io.netty.buffer.Unpooled;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,12 +39,17 @@ public class ChannelConfig {
 
     @Bean(name = "mcuChannel")
     public Channel mcuChannel() {
-        String com = "";
-        int buadrate = 0;
-        SerialPortChannel serialPortChannel = new SerialPortChannel(com, buadrate, "mcuChannel",
-                new DefaultBinaryTruncationDecoder(Frame.getStartMarkBytes(), Frame.getEndMarkBytes(), Frame.lengthIndex, 1024),
-                (o) -> ((Frame) o).encode(), Frame::decode, null);
-        return serialPortChannel;
+        String com = "COM4";
+        int buadrate = 115200;
+        return new SerialPortChannel<Frame,Frame>(com, buadrate, "mcuChannel",
+                new DefaultBinaryTruncationDecoder(Frame.getStartMarkBytes(), Frame.getEndMarkBytes(),
+                            Frame.lengthIndex, 1024,Frame.lengthBesideContent),
+                Frame::encode, Frame::decode, RCS::consumer);
+
     }
+
+
+
+
 
 }

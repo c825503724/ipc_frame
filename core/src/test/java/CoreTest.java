@@ -23,13 +23,6 @@ public class CoreTest {
 
     @Test
     public void codec() throws Exception {
-        DefaultBinaryTruncationDecoder defaultBinaryTruncationDecoder =
-                new DefaultBinaryTruncationDecoder(Unpooled.copiedBuffer(new byte[]{(byte) 0xAA}),
-                        Unpooled.copiedBuffer(new byte[]{(byte) 0x55}), 1, Integer.MAX_VALUE);
-        ByteBuf byteBuf = Unpooled.buffer();
-        byteBuf.writeBytes(new byte[]{(byte) 0xAA, 0x00, 0x05, 0x12, 0x22, 0x55,
-                (byte) 0xAA, 0x00, 0x05, 0x12, 0x22, 0x55});
-
     }
 
     private void s1(Integer e) {

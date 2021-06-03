@@ -23,14 +23,15 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
     @Setter
     private final ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
 
-    public DefaultBinaryTruncationDecoder(ByteBuf start, ByteBuf finished, Integer lengthOffset, Integer maxFrameLength) {
+    public DefaultBinaryTruncationDecoder(ByteBuf start, ByteBuf finished, Integer lengthOffset,
+                                          Integer maxFrameLength, Integer minFrameLength) {
         this.start = start;
         this.finished = finished;
         this.lengthOffset = lengthOffset;
         this.maxFrameLength = maxFrameLength;
-        this.minFrameLength = start.capacity() + finished.capacity() + lengthOffset;
-    }
+        this.minFrameLength = Math.max(start.capacity() + finished.capacity() + lengthOffset, minFrameLength);
 
+    }
 
 
     @Override
@@ -62,14 +63,17 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
             return null;
         }
         if (startIndex + minFrameLength < buffer.readableBytes()) {
+
             int length = byteOrder == ByteOrder.LITTLE_ENDIAN ?
                     buffer.retainedSlice(startIndex + lengthOffset, 2).readUnsignedShortLE() :
                     buffer.retainedSlice(startIndex + lengthOffset, 2).readUnsignedShort();
-            if (length > maxFrameLength) {
+            if (length > maxFrameLength || length < minFrameLength) {
+                System.out.println("frame长度校验失败");
                 buffer.skipBytes(startIndex + 1);
                 return null;
             }
             if (startIndex + length <= buffer.readableBytes()) {
+
                 if (buffer.retainedSlice(startIndex + length - finished.capacity(),
                         finished.capacity()).equals(finished)) {
                     return buffer.readRetainedSlice(length);
@@ -93,7 +97,7 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
+        cause.printStackTrace();
     }
 
     /**

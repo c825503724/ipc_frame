@@ -27,7 +27,7 @@ public class Frame {
 
     static {
         codecFields = Arrays.stream(Frame.class.getDeclaredFields()).filter(field -> field.getAnnotation(PropertyBytesInfo.class) != null)
-                .sorted((Comparator.comparingInt(o -> o.getAnnotation(PropertyBytesInfo.class).order())))
+                .sorted((Comparator.comparingDouble(o -> o.getAnnotation(PropertyBytesInfo.class).order())))
                 .collect(Collectors.toList());
         lengthBesideContent = codecFields.stream().mapToInt((f) -> f.getAnnotation(PropertyBytesInfo.class).length()).sum();
     }

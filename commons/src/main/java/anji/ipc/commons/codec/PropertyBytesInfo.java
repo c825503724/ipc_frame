@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface PropertyBytesInfo {
     int length();
 
-    int order() default 0;
+    float order() default 0;
 
     Class<?> type() ;
 }
