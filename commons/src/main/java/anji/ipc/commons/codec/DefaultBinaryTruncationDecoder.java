@@ -39,6 +39,7 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
         st(ctx, in, out);
     }
 
+
     private void st(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> objects) throws Exception {
         int i = buffer.readerIndex();
         while (buffer.readableBytes() > minFrameLength) {
@@ -53,43 +54,48 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
         }
     }
 
+    String ss(ByteBuf vv) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int a = vv.readerIndex(); a < vv.readableBytes(); ++a) {
+            stringBuilder.append(Integer.toHexString(vv.getUnsignedByte(a))).append(" ");
+        }
+        return stringBuilder.toString();
+    }
+
     protected Object decode(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
-        int r = buffer.readableBytes();
+        int r = buffer.readableBytes(),
+                sw = start.readableBytes(),
+                ew = finished.readableBytes();
         if (r < minFrameLength) {
             return null;
         }
-        int startIndex = indexOf(buffer, start);
-        if (startIndex < 0) {
+        final int ww = indexOf(buffer, start);
+        if (ww < 0) {
             buffer.skipBytes(r);
             return null;
         }
-        if (startIndex + minFrameLength < r) {
-
+        r = r - ww;
+        buffer.skipBytes(ww);
+        final int rd = buffer.readerIndex();
+        if (minFrameLength < r) {
             int length = byteOrder == ByteOrder.LITTLE_ENDIAN ?
-                    buffer.retainedSlice(startIndex + lengthOffset, 2).readUnsignedShortLE() :
-                    buffer.retainedSlice(startIndex + lengthOffset, 2).readUnsignedShort();
+                    buffer.retainedSlice(rd+lengthOffset, 2).readUnsignedShortLE() :
+                    buffer.retainedSlice(rd+lengthOffset, 2).readUnsignedShort();
             if (length > maxFrameLength || length < minFrameLength) {
-                System.out.println("frame长度校验失败");
-                buffer.skipBytes(startIndex + 1);
+                System.out.println("frame 长度字段：" + length);
+                buffer.skipBytes(sw);
                 return null;
             }
-            if (startIndex + length <= r) {
-                if (startIndex != 0) {
-                    logger.info("1111111111");
-                }
-                buffer.skipBytes(startIndex);
-                if (buffer.retainedSlice(length - finished.capacity(),
-                        finished.capacity()).equals(finished)) {
+            if (length <= r) {
+                if (buffer.retainedSlice(rd+length - ew,
+                        ew).equals(finished)) {
                     return buffer.readRetainedSlice(length);
                 } else {
-                    buffer.skipBytes(1);
+                    buffer.skipBytes(sw);
                     return null;
                 }
             }
 
-        }
-        if (startIndex > 0) {
-            buffer.skipBytes(startIndex);
         }
 
 
