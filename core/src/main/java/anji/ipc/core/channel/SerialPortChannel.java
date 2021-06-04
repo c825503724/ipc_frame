@@ -86,12 +86,12 @@ public class SerialPortChannel<R, P> extends Channel<R, P> {
                     protected void initChannel(RxtxChannel ch) throws Exception {
                         ch.config().setBaudrate(baudrate)
                         .setAllocator(new MaxLengthRecvByteBufAllocator());
-                        ch.pipeline().addLast(splitter,
+                                                if (splitter != null) {
+                            ch.pipeline().addLast(splitter);
+                        }
+                        ch.pipeline().addLast(
                                 new RxtxClientHandler(),
                                 new MessageEncoder());
-//                        if (splitter != null) {
-//                            ch.pipeline().addLast(splitter);
-//                        }
                     }
                 }));
         return connect();

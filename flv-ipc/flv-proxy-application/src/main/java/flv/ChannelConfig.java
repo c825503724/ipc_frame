@@ -40,10 +40,10 @@ public class ChannelConfig {
     @Bean(name = "mcuChannel")
     public Channel mcuChannel() {
         String com = "COM4";
-        int buadrate = 115200;
-        return new SerialPortChannel<Frame,Frame>(com, buadrate, "mcuChannel",
+        int buadrate = 115200*4;
+        return new SerialPortChannel<>(com, buadrate, "mcuChannel",
                 new DefaultBinaryTruncationDecoder(Frame.getStartMarkBytes(), Frame.getEndMarkBytes(),
-                            Frame.lengthIndex, 1024,Frame.lengthBesideContent),
+                        Frame.lengthIndex, 1024, Frame.lengthBesideContent),
                 Frame::encode, Frame::decode, RCS::consumer);
 
     }

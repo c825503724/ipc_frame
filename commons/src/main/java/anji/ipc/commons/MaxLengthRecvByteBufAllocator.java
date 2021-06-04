@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class MaxLengthRecvByteBufAllocator extends PooledByteBufAllocator {
 
-    private int max = 1024;
+    private int max = 1024*4;
 
 
 

@@ -115,24 +115,36 @@ public class Frame {
 
 
         }
-        ByteBuf bb = byteBuf.retainedSlice(byteBuf.readerIndex(), byteBuf.readableBytes() - 3);
+        int r = byteBuf.readableBytes();
+        byteBuf.setByte(r - 3, getCheck(byteBuf, byteBuf.readerIndex(), r - 3));
+        return byteBuf;
+    }
+
+    public static byte getCheck(ByteBuf byteBuf, int from, int length) {
+        ByteBuf bb = byteBuf.retainedSlice(from, length);
         final int[] i = new int[1];
         bb.forEachByte((b) -> {
             i[0] += b;
             i[0] &= 0xff;
             return true;
         });
-        byteBuf.setByte(byteBuf.readableBytes() - 3, i[0]);
-        return byteBuf;
+        return (byte) i[0];
     }
 
     public static Frame decode(ByteBuf byteBuffer) {
         Frame frame = new Frame();
+        int r = byteBuffer.readableBytes(),
+                frameLength = byteOrder == ByteOrder.LITTLE_ENDIAN ? byteBuffer.getShortLE(lengthIndex) : byteBuffer.getShort(lengthIndex);
+        if (r < frameLength) {
+            log.error("frame 长度校验失败！");
+            byteBuffer.skipBytes(r);
+            return frame;
+        }
         int marks = getStartMarkBytes().readableBytes();
         byteBuffer.skipBytes(marks);
         try {
 
-            for (int i = 1; i < codecFields.size()-1; ++i) {
+            for (int i = 1; i < codecFields.size() - 1; ++i) {
                 Field f = codecFields.get(i);
                 f.setAccessible(true);
                 Class c = f.getAnnotation(PropertyBytesInfo.class).type();

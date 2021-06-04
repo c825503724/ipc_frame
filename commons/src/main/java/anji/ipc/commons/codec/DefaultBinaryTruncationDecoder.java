@@ -49,20 +49,21 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
             if (i == buffer.readerIndex()) {
                 break;
             }
+            i = buffer.readerIndex();
         }
     }
 
     protected Object decode(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
-
-        if (buffer.readableBytes() < minFrameLength) {
+        int r = buffer.readableBytes();
+        if (r < minFrameLength) {
             return null;
         }
         int startIndex = indexOf(buffer, start);
         if (startIndex < 0) {
-            buffer.skipBytes(buffer.readableBytes());
+            buffer.skipBytes(r);
             return null;
         }
-        if (startIndex + minFrameLength < buffer.readableBytes()) {
+        if (startIndex + minFrameLength < r) {
 
             int length = byteOrder == ByteOrder.LITTLE_ENDIAN ?
                     buffer.retainedSlice(startIndex + lengthOffset, 2).readUnsignedShortLE() :
@@ -72,13 +73,16 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
                 buffer.skipBytes(startIndex + 1);
                 return null;
             }
-            if (startIndex + length <= buffer.readableBytes()) {
-
-                if (buffer.retainedSlice(startIndex + length - finished.capacity(),
+            if (startIndex + length <= r) {
+                if (startIndex != 0) {
+                    logger.info("1111111111");
+                }
+                buffer.skipBytes(startIndex);
+                if (buffer.retainedSlice(length - finished.capacity(),
                         finished.capacity()).equals(finished)) {
                     return buffer.readRetainedSlice(length);
                 } else {
-                    buffer.skipBytes(startIndex + 1);
+                    buffer.skipBytes(1);
                     return null;
                 }
             }
