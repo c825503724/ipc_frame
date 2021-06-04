@@ -121,14 +121,12 @@ public class Frame {
     }
 
     public static byte getCheck(ByteBuf byteBuf, int from, int length) {
-        ByteBuf bb = byteBuf.retainedSlice(from, length);
-        final int[] i = new int[1];
-        bb.forEachByte((b) -> {
-            i[0] += b;
-            i[0] &= 0xff;
-            return true;
-        });
-        return (byte) i[0];
+        int a = 0;
+        for (int i = 0; i < length; ++i) {
+            a += byteBuf.getUnsignedByte(i+from);
+            a &= 0xff;
+        }
+        return (byte) a;
     }
 
     public static Frame decode(ByteBuf byteBuffer) {
