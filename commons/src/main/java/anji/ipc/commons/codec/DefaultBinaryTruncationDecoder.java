@@ -54,13 +54,7 @@ public class DefaultBinaryTruncationDecoder extends ByteToMessageDecoder {
         }
     }
 
-    String ss(ByteBuf vv) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int a = vv.readerIndex(); a < vv.readableBytes(); ++a) {
-            stringBuilder.append(Integer.toHexString(vv.getUnsignedByte(a))).append(" ");
-        }
-        return stringBuilder.toString();
-    }
+
 
     protected Object decode(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         int r = buffer.readableBytes(),

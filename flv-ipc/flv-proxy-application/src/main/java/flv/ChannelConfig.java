@@ -3,6 +3,7 @@ package flv;
 import anji.ipc.commons.codec.Decoder;
 import anji.ipc.commons.codec.DefaultBinaryTruncationDecoder;
 import anji.ipc.commons.codec.Encoder;
+import anji.ipc.commons.utils.PrintHexStringUtil;
 import anji.ipc.core.at_protocol.Frame;
 import anji.ipc.core.channel.Channel;
 import anji.ipc.core.channel.SerialPortChannel;
@@ -50,32 +51,6 @@ public class ChannelConfig {
        }
     volatile long i = 0;
 
-//    @Bean(name = "mcuChannel")
-    public Channel mcuChannel1() {
-        String com = "COM1";
-        int buadrate = 115200 * 4;
-        return new SerialPortChannel<>(com, buadrate, "mcuChannel",
-                new DefaultBinaryTruncationDecoder(Unpooled.buffer(1).writeByte(0xAA),
-                        Unpooled.buffer(1).writeByte(0x55),
-                        1, 1024, 128),
-                new Encoder<Object>() {
-                    @Override
-                    public ByteBuf encoder(Object o) {
-                        return null;
-                    }
-                }, new Decoder<Object>() {
-            @Override
-            public Object decode(ByteBuf byteBuf) {
-                long a = byteBuf.getUnsignedInt(4);
-                if (Math.abs(a - i) > 20) {
-                    System.out.println("oooooooooooooo:  " + a);
-                }
-                i = a;
-                return null;
-            }
-        }, RCS::consumer);
-
-    }
 
 
 }

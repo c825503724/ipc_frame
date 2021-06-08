@@ -45,14 +45,14 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
 
     private ChannelFuture channelFuture;
 
-    private Boolean idleCheck=true;
+    private Boolean idleCheck = true;
 
     public TcpClientChannel(boolean idleCheck, String serverIp, Integer serverPort, String channelName, ByteToMessageDecoder splitter,
                             Encoder<R> encoder, Decoder<P> decoder, Consumer<Event> c) {
         super(channelName, splitter, encoder, decoder, c);
         this.serverIp = serverIp;
         this.serverPort = serverPort;
-        this.idleCheck= idleCheck;
+        this.idleCheck = idleCheck;
 
     }
 
@@ -63,7 +63,7 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
         @Override
         public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
             logger.info(String.format("tcp断开服务器连接,%s秒后开始尝试重连", reconnectDelay));
-            if(eventConsumer!=null) {
+            if (eventConsumer != null) {
                 eventConsumer.accept(new ChannelDisconnectEvent(channelName));
             }
             ctx.channel().eventLoop().schedule(TcpClientChannel.this::connect, reconnectDelay, TimeUnit.SECONDS);
@@ -71,13 +71,17 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            if(eventConsumer!=null) {eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));((ByteBuf)msg).release();}
+            if (eventConsumer != null) {
+                eventConsumer.accept(new MessageReceiveEvent(new MessageWrapper(channelName, decoder.decode((ByteBuf) msg))));
+                ((ByteBuf) msg).release();
+            }
         }
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-            if(eventConsumer!=null) {
-            eventConsumer.accept(new ChannelConnectedEvent(channelName));}
+            if (eventConsumer != null) {
+                eventConsumer.accept(new ChannelConnectedEvent(channelName));
+            }
 
             logger.info(String.format("tcp连上服务器%s", ctx.channel().remoteAddress()));
         }
@@ -125,10 +129,10 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
                         ch.pipeline().addLast(
                                 new MessageEncoder(),
                                 reconnectHandle);
-                        if(idleCheck){
+                        if (idleCheck) {
                             ch.pipeline().addLast(new IdleStateHandler(readTimeout, 0, 0));
                         }
-                        if(splitter!=null){
+                        if (splitter != null) {
                             ch.pipeline().addLast(splitter);
                         }
                     }
@@ -165,6 +169,14 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
     @Override
     @PreDestroy
     public void close() {
-        group.shutdownGracefully();
+        if (group != null) {
+            try {
+                channelFuture.channel().closeFuture().sync();
+                group.shutdownGracefully();
+            } catch (InterruptedException e) {
+                return;
+            }
+
+        }
     }
 }

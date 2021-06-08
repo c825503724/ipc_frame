@@ -32,6 +32,8 @@ public class RCS {
     private static volatile int id = 0;
 
     public static void consumer(Event o) {
+        return;
+       /*
         if (o instanceof MessageReceiveEvent) {
             MessageReceiveEvent e = (MessageReceiveEvent) o;
             Frame f = (Frame) ((MessageWrapper) e.getMessage()).getMessage();
@@ -45,6 +47,6 @@ public class RCS {
             id = s;
             log.info("***" + s);
 
-        }
+        }*/
     }
 }

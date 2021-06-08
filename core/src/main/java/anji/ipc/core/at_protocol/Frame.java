@@ -76,8 +76,7 @@ public class Frame {
         ByteBuf byteBuf = Unpooled.buffer(frameLength.getValue());
         try {
 
-            for (int i = 0; i < codecFields.size(); ++i) {
-                Field f = codecFields.get(i);
+            for (Field f : codecFields) {
                 Class c = f.getType();
                 Object v = f.get(this);
                 f.setAccessible(true);
