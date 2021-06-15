@@ -5,6 +5,7 @@ import anji.ipc.commons.codec.DefaultBinaryTruncationDecoder;
 import anji.ipc.commons.codec.Encoder;
 import anji.ipc.commons.utils.PrintHexStringUtil;
 import anji.ipc.core.at_protocol.Frame;
+import anji.ipc.core.at_protocol.FrameType;
 import anji.ipc.core.channel.Channel;
 import anji.ipc.core.channel.SerialPortChannel;
 import anji.ipc.core.channel.TcpClientChannel;
@@ -46,7 +47,7 @@ public class ChannelConfig {
            return new SerialPortChannel<>(com, buadrate, "mcuChannel",
                    new DefaultBinaryTruncationDecoder(Frame.getStartMarkBytes(), Frame.getEndMarkBytes(),
                            Frame.lengthIndex, 1024, Frame.lengthBesideContent),
-                   Frame::encode, Frame::decode, RCS::consumer);
+                   FrameType::encode, Frame::decode, RCS::consumer);
 
        }
     volatile long i = 0;

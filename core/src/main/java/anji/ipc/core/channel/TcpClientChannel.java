@@ -97,7 +97,7 @@ public class TcpClientChannel<R, P> extends Channel<R, P> {
                 return;
             }
             IdleStateEvent e = (IdleStateEvent) evt;
-            if (e.state() == IdleState.READER_IDLE) {
+            if (e.state() == IdleState.ALL_IDLE) {
                 logger.info("主动断开服务器连接");
                 ctx.close();
             }

@@ -13,4 +13,6 @@ public @interface PropertyBytesInfo {
     float order() default 0;
 
     Class<?> type() ;
+
+    int key() default -1;
 }

@@ -77,7 +77,11 @@ public class SerialPortChannel<R, P> extends Channel<R, P> {
 
     @Override
     public boolean init() {
-        group = new OioEventLoopGroup();
+        group = new OioEventLoopGroup(0, (t) -> {
+            Thread g = new Thread(t);
+            g.setName(channelName + "-workerThread");
+            return g;
+        });
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(RxtxChannel.class)
@@ -85,8 +89,8 @@ public class SerialPortChannel<R, P> extends Channel<R, P> {
                     @Override
                     protected void initChannel(RxtxChannel ch) throws Exception {
                         ch.config().setBaudrate(baudrate)
-                        .setAllocator(new MaxLengthRecvByteBufAllocator());
-                                                if (splitter != null) {
+                                .setAllocator(new MaxLengthRecvByteBufAllocator());
+                        if (splitter != null) {
                             ch.pipeline().addLast(splitter);
                         }
                         ch.pipeline().addLast(

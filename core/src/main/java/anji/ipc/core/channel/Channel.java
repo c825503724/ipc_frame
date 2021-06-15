@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public abstract class Channel<R, P> {
 
-    public class MessageEncoder extends MessageToByteEncoder<R> {
+    public  class MessageEncoder extends MessageToByteEncoder<R> {
         @Override
         protected void encode(ChannelHandlerContext ctx, R msg, ByteBuf out) throws Exception {
             out.writeBytes(encoder.encoder(msg));

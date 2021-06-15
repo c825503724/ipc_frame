@@ -21,7 +21,7 @@ public class Test {
         Frame f = Mock.mockFrame();
         long fd = System.currentTimeMillis();
         while (i-- > 0) {
-            ByteBuf buf = f.encode();
+            ByteBuf buf = f.encode0();
             Frame d = Frame.decode(buf);
         }
         System.out.println("end:"+(System.currentTimeMillis()-fd)/1000);

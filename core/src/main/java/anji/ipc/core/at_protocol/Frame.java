@@ -1,24 +1,26 @@
 package anji.ipc.core.at_protocol;
 
 import anji.ipc.commons.codec.PropertyBytesInfo;
+import anji.ipc.commons.utils.RankFieldsByBytesInfo;
 import anji.ipc.core.at_protocol.type.UnsignedShort;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
+@Setter
+@Getter
 @Slf4j
-public class Frame {
+public class Frame implements Encoder{
 
     public static final ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
     public static final int lengthIndex = 24;
@@ -26,9 +28,7 @@ public class Frame {
     public static final List<Field> codecFields;
 
     static {
-        codecFields = Arrays.stream(Frame.class.getDeclaredFields()).filter(field -> field.getAnnotation(PropertyBytesInfo.class) != null)
-                .sorted((Comparator.comparingDouble(o -> o.getAnnotation(PropertyBytesInfo.class).order())))
-                .collect(Collectors.toList());
+        codecFields = RankFieldsByBytesInfo.rank(Frame.class);
         lengthBesideContent = codecFields.stream().mapToInt((f) -> f.getAnnotation(PropertyBytesInfo.class).length()).sum();
     }
 
@@ -71,52 +71,21 @@ public class Frame {
                 byteBuffer.writeShortLE(endMark.getValue()) : byteBuffer.writeShort(endMark.getValue());
     }
 
-    public ByteBuf encode() {
-        frameLength = new UnsignedShort((short) (lengthBesideContent + (data != null ? data.length : 0)));
-        ByteBuf byteBuf = Unpooled.buffer(frameLength.getValue());
-        try {
+    @Override
+    public int length() {
+        return (lengthBesideContent + (data != null ? data.length : 0));
+    }
 
-            for (Field f : codecFields) {
-                Class c = f.getType();
-                Object v = f.get(this);
-                f.setAccessible(true);
-                if (c.equals(UnsignedShort.class)) {
-                    if (byteOrder.equals(ByteOrder.LITTLE_ENDIAN)) {
-                        byteBuf.writeShortLE(((UnsignedShort) v).getValue());
-                    } else {
-                        byteBuf.writeShort(((UnsignedShort) v).getValue());
-                    }
-                } else if (c.equals(UnsignedInteger.class)) {
-                    if (byteOrder.equals(ByteOrder.LITTLE_ENDIAN)) {
-                        byteBuf.writeIntLE(((UnsignedInteger) v).intValue());
-                    } else {
-                        byteBuf.writeInt(((UnsignedInteger) v).intValue());
-                    }
-                } else if (c.equals(UnsignedLong.class)) {
-                    if (byteOrder.equals(ByteOrder.LITTLE_ENDIAN)) {
-                        byteBuf.writeLongLE(((UnsignedLong) v).longValue());
-                    } else {
-                        byteBuf.writeLong(((UnsignedLong) v).longValue());
-                    }
-                } else if (c.equals(ByteBuf.class) && v != null) {
-                    byteBuf.writeBytes((ByteBuf) v);
-                } else if (c.equals(byte[].class) && v != null) {
-                    byteBuf.writeBytes((byte[]) v);
-                } else if (c.equals(Byte.class)) {
-                    if (v != null) {
-                        byteBuf.writeByte((Byte) v);
-                    } else {
-                        byteBuf.writeByte(0);
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
+    @Override
+    public List<Field> getRandFields() {
+        return codecFields;
+    }
 
-
-        }
-        int r = byteBuf.readableBytes();
-        byteBuf.setByte(r - 3, getCheck(byteBuf, byteBuf.readerIndex(), r - 3));
-        return byteBuf;
+    public ByteBuf encode0() {
+        ByteBuf buf =  defaultEncode();
+        int r = buf.readableBytes();
+        buf.setByte(r - 3, getCheck(buf, buf.readerIndex(), r - 3));
+        return buf;
     }
 
     public static byte getCheck(ByteBuf byteBuf, int from, int length) {
@@ -172,5 +141,45 @@ public class Frame {
         byteBuffer.skipBytes(marks);
 
         return frame;
+    }
+
+    public void setTimeStamp0(Long timeStamp) {
+        this.timeStamp = UnsignedLong.fromLongBits(timeStamp);
+    }
+
+    public void setFrameType0(Short frameType) {
+        this.frameType =new UnsignedShort( frameType);
+    }
+
+    public void setFrameNumber0(Short frameNumber) {
+        this.frameNumber =new UnsignedShort( frameNumber);
+    }
+
+    public void setCommandCollection0(Short commandCollection) {
+        this.commandCollection = new UnsignedShort(commandCollection);
+    }
+
+    public void setCommandCode0(Short commandCode) {
+        this.commandCode = new UnsignedShort(commandCode);
+    }
+
+    public void setCommandFlag0(Integer commandFlag) {
+        this.commandFlag = UnsignedInteger.fromIntBits(commandFlag);
+    }
+
+    public void setDataCount0(Short dataCount) {
+        this.dataCount = new UnsignedShort(dataCount);
+    }
+
+    public void setFrameLength0(Short frameLength) {
+        this.frameLength = new UnsignedShort(frameLength);
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public void setCheck(Byte check) {
+        this.check = check;
     }
 }
