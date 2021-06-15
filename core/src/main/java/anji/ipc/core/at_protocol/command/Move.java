@@ -1,7 +1,8 @@
-package anji.ipc.core.at_protocol;
+package anji.ipc.core.at_protocol.command;
 
 import anji.ipc.commons.codec.PropertyBytesInfo;
 import anji.ipc.commons.utils.RankFieldsByBytesInfo;
+import anji.ipc.core.at_protocol.FrameType;
 import anji.ipc.core.at_protocol.type.UnsignedShort;
 import com.google.common.primitives.UnsignedInteger;
 import lombok.Getter;
@@ -85,7 +86,7 @@ public class Move extends FrameType {
     }
 
     @Override
-    void encode0() {
+    public void encode0() {
         getFrame().setData(defaultEncode().array());
     }
 

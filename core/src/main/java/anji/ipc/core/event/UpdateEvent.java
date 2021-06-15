@@ -10,7 +10,10 @@ public class UpdateEvent extends Event {
     private String eventKey = "update";
     @Getter
     @Setter
-    private Map metas;
+    private String key;
+    @Getter
+    @Setter
+    private Object infos;
 
     public UpdateEvent(SourceType sourceType, CauseType causeType, int priority, TargetObject targetObject) {
         super(sourceType, causeType, priority, targetObject);

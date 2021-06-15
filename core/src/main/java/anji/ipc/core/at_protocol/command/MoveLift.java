@@ -1,4 +1,4 @@
-package anji.ipc.core.at_protocol;
+package anji.ipc.core.at_protocol.command;
 
 import anji.ipc.commons.codec.PropertyBytesInfo;
 import anji.ipc.commons.utils.RankFieldsByBytesInfo;
@@ -33,7 +33,7 @@ public class MoveLift extends Move {
 
 
     @Override
-    void encode0() {
+    public void encode0() {
         getFrame().setData(defaultEncode().array());
     }
 }

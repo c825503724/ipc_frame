@@ -25,15 +25,16 @@ public abstract class FrameType implements Encoder{
 
 
 
-    public FrameType(UnsignedShort commandCollection, UnsignedShort commonCode,
+    public FrameType(UnsignedShort commandCollection, UnsignedShort commandCode,
                      UnsignedInteger commandFlag, UnsignedShort count) {
         this.commandCollection = commandCollection;
-        this.commonCode = commonCode;
+        this.commonCode = commandCode;
         this.commandFlag = commandFlag;
         this.count = count;
         frame.setCommandCollection(commandCollection);
-        frame.setCommandCode(commonCode);
+        frame.setCommandCode(commandCode);
         frame.setCommandFlag(commandFlag);
+        frame.setDataCount(count);
     }
 
 
@@ -43,6 +44,6 @@ public abstract class FrameType implements Encoder{
         return frame.encode0();
     }
 
-    abstract void encode0();
+   public abstract void encode0();
 
 }

@@ -2,6 +2,7 @@ package test;
 
 import anji.ipc.core.at_protocol.Frame;
 import flv.test.Mock;
+import flv.utils.ATIDS_GeneratorImpl;
 import io.netty.buffer.ByteBuf;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -17,14 +18,16 @@ public class Test {
 
     @org.junit.Test
     public void jax() throws Exception {
-        int i = 1;
-        Frame f = Mock.mockFrame();
-        long fd = System.currentTimeMillis();
-        while (i-- > 0) {
-            ByteBuf buf = f.encode0();
-            Frame d = Frame.decode(buf);
-        }
-        System.out.println("end:"+(System.currentTimeMillis()-fd)/1000);
+       st();
+    }
+
+
+    public void st(){
+        String p = "C:\\Users\\admin\\Downloads\\AT_HAL_MCU-Single_Steering_Wheel_Control-7ae944ee7b0e0d3e02683e6822f99a5b0c5f08f9\\AT_Doc\\AT_Config";
+        ATIDS_GeneratorImpl atids_generator = new ATIDS_GeneratorImpl(p);
+        atids_generator.getRankIDS();
+        System.out.println("");
+
     }
 
 

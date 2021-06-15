@@ -1,5 +1,8 @@
 package anji.ipc.core;
 
+import anji.ipc.core.event.UpdateEvent;
+import com.google.common.eventbus.Subscribe;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,13 +14,20 @@ public class WholeStateContainer {
 
     private static WholeStateContainer instance = null;
 
-
+    @Subscribe
     public void updateKey(String k, Object v) {
         stateMap.put(k, v);
     }
 
-    public void updateMap(Map<String, Object> n) {
-        stateMap.putAll(n);
+    @SuppressWarnings("unchecked")
+    public void updateMap(UpdateEvent updateEvent) {
+        String key = updateEvent.getKey();
+        Object inofos = updateEvent.getInfos();
+        if (updateEvent.eventKey() != null) {
+            stateMap.put(key, updateEvent.getInfos());
+        } else if (inofos instanceof Map) {
+            stateMap.putAll((Map) inofos);
+        }
     }
 
     private WholeStateContainer() {
