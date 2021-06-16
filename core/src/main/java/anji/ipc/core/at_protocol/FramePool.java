@@ -8,6 +8,7 @@ import java.util.List;
 
 public class FramePool {
 
+
     static class EmptyFrame extends FrameType {
         public EmptyFrame(Integer commandCollection, Integer commandCode,
                           Integer commandFlag, Integer count) {

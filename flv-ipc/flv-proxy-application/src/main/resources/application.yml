@@ -1,0 +1,10 @@
+channel:
+  rcs:
+    ip: loclahost
+    port: 5005
+  mcu:
+    comName: COM1
+    buadrate: 115200
+map:
+  path: C:\Users\admin\Documents\WeChat Files\wxid_crpxtgdq72zq42\FileStorage\File\2021-05\ipc_ver_map 2.xml
+

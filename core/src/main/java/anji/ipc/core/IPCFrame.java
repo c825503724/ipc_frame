@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,11 +20,15 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class IPCFrame {
 
+    private volatile boolean inited = false;
 
     @Setter
     private AgvController agvController;
 
     protected final Logger logger = LoggerFactory.getLogger(IPCFrame.class);
+
+
+    private final LinkedList<InitProcess> initProcesses = new LinkedList<>();
 
 
     private final Map<String, EventBus> eventBusMap = new Hashtable<>();
@@ -53,6 +58,28 @@ public abstract class IPCFrame {
         bindDefaultEventListens();
         checkStartCondition();
         addDefaultStartProcedureEvent();
+    }
+
+    public void addInitProcess(InitProcess initProcess) {
+        initProcesses.add(initProcess);
+    }
+
+    public void processInitProcesses() {
+        if (inited) {
+            throw new RuntimeException("初始化已做过！");
+        }
+        for (InitProcess initProcess : initProcesses) {
+            String name = initProcess.name();
+            try {
+                initProcess.process();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("执行流程---{}", name);
+                }
+            } catch (Exception e) {
+                logger.error("执行流程--{}失败", name);
+            }
+        }
+
     }
 
     public abstract void bindDefaultEventBus();
