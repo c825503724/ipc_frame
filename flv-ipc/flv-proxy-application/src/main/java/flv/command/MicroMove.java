@@ -1,4 +1,4 @@
-package anji.ipc.core.at_protocol.command;
+package flv.command;
 
 import anji.ipc.commons.codec.PropertyBytesInfo;
 import anji.ipc.commons.utils.RankFieldsByBytesInfo;
