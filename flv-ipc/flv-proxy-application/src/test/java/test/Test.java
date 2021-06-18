@@ -29,6 +29,7 @@ public class Test {
     public void st(){
         String p = "C:\\Users\\admin\\Downloads\\AT_HAL_MCU-Single_Steering_Wheel_Control-7ae944ee7b0e0d3e02683e6822f99a5b0c5f08f9\\AT_Doc\\AT_Config";
         ATIDS_GeneratorImpl atids_generator = new ATIDS_GeneratorImpl(p);
+        atids_generator.init();
         atids_generator.getRankIDS();
         System.out.println("");
 

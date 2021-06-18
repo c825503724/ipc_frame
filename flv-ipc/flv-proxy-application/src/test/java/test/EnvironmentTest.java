@@ -28,14 +28,7 @@ public class EnvironmentTest {
 
     @Test
     public void ss() throws Exception{
-        FlvStateReportedMessage flvStateReportedMessage = mockObject(FlvStateReportedMessage.class);
-        DeviceInfoRegisteredMessage deviceInfoRegisteredMessage= mockObject(DeviceInfoRegisteredMessage.class);
-        CmdRespMessage cmdRespMessage = mockObject(CmdRespMessage.class);
         channel.init();
-        channel.send(flvStateReportedMessage);
-        channel.send(deviceInfoRegisteredMessage);
-        channel.send(cmdRespMessage);
-        System.out.println(channel);
 
     }
 

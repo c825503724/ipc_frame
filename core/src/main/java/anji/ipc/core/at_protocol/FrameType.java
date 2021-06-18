@@ -23,7 +23,10 @@ public abstract class FrameType implements Encoder{
 
     private UnsignedShort count;
 
+    {
+        frame.setTimeStamp0(System.currentTimeMillis());
 
+    }
 
     public FrameType(UnsignedShort commandCollection, UnsignedShort commandCode,
                      UnsignedInteger commandFlag, UnsignedShort count) {
@@ -45,5 +48,7 @@ public abstract class FrameType implements Encoder{
     }
 
    public abstract void encode0();
+
+
 
 }

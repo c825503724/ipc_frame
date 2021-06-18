@@ -68,17 +68,17 @@ public abstract class IPCFrame {
         if (inited) {
             throw new RuntimeException("初始化已做过！");
         }
-        for (InitProcess initProcess : initProcesses) {
-            String name = initProcess.name();
+        initProcesses.forEach(p->{
+            String name = p.name();
             try {
-                initProcess.process();
+                p.process();
                 if (logger.isDebugEnabled()) {
                     logger.debug("执行流程---{}", name);
                 }
             } catch (Exception e) {
                 logger.error("执行流程--{}失败", name);
             }
-        }
+        });
 
     }
 

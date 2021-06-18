@@ -1,11 +1,7 @@
 package flv;
 
-import anji.ipc.core.at_protocol.Frame;
 import anji.ipc.core.channel.Channel;
-import anji.ipc.core.channel.MessageWrapper;
 import anji.ipc.core.event.Event;
-import anji.ipc.core.event.MessageReceiveEvent;
-import flv.test.Mock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,15 +14,13 @@ import javax.annotation.PostConstruct;
 public class RCS {
 
     @Autowired
-    @Qualifier(value = "mcuChannel")
+    @Qualifier(value = "rcsChannel")
     private Channel channel;
 
 
     @PostConstruct
     public void init() throws Exception {
         channel.init();
-        Frame f = Mock.mockFrame();
-        channel.send(f);
     }
 
     private static volatile int id = 0;

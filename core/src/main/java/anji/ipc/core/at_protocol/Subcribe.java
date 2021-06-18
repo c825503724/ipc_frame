@@ -11,14 +11,14 @@ import java.util.List;
 
 public class Subcribe extends FrameType {
 
-    private List<UnsignedShort> IDS;
+    private static List<UnsignedShort> IDS;
 
     public Subcribe(List<UnsignedShort> IDS) {
         super(UnsignedShort.fromLongBits((short) 0),
                 UnsignedShort.fromLongBits((short) 5),
                 UnsignedInteger.fromIntBits(1),
                 UnsignedShort.fromLongBits((short) 0));
-        Subcribe.this.IDS = IDS;
+        Subcribe.IDS = IDS;
     }
 
     @Override

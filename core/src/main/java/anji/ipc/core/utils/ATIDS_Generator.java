@@ -8,9 +8,10 @@ import java.util.Map;
 public abstract class ATIDS_Generator {
 
 
-    public abstract Map<Integer, M> getMs();
-
 
     public abstract List<Integer> getRankIDS();
 
+    public abstract M getMByIndex(Integer m);
+
+    public abstract Integer getIndexByName(String name);
 }

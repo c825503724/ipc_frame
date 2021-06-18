@@ -111,10 +111,11 @@ public class SerialPortChannel<R, P> extends Channel<R, P> {
     }
 
 
-    @PreDestroy
     private void stop() throws Exception {
-        channelFuture.channel().closeFuture().sync();
-        group.shutdownGracefully();
+        if (channelFuture != null && group != null) {
+            channelFuture.channel().closeFuture().sync();
+            group.shutdownGracefully();
+        }
     }
 
     @Override
@@ -135,6 +136,7 @@ public class SerialPortChannel<R, P> extends Channel<R, P> {
     @Override
     @PreDestroy
     public void close() {
+
         try {
             stop();
         } catch (Exception e) {
